@@ -3,7 +3,13 @@
     "allow": [
       "Bash(gh --version:*)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(gh repo create:*)",
+      "Bash(git remote remove:*)",
+      "Bash(git remote:*)",
+      "Bash(git push:*)",
+      "Bash(chmod:*)"
     ]
   }
 }
