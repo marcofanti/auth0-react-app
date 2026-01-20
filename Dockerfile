@@ -1,5 +1,5 @@
 # Build stage
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -12,29 +12,29 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Build the application
+# Build the application (without env vars - will be injected at runtime)
 RUN npm run build
 
 # Production stage
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Install serve to run the static site
+# Install serve globally
 RUN npm install -g serve
 
-# Copy built assets from builder
+# Copy built app
 COPY --from=builder /app/dist ./dist
 
 # Copy environment injection script
-COPY inject-env.sh /app/inject-env.sh
-RUN chmod +x /app/inject-env.sh
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
-# Expose port 8080 for Cloud Run
+# Expose port 8080
 EXPOSE 8080
 
-# Use injection script as entrypoint
-ENTRYPOINT ["/app/inject-env.sh"]
+# Use custom entrypoint
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
-# Serve the built app on port 8080
+# Start serve
 CMD ["serve", "-s", "dist", "-l", "8080"]
