@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Auth0 React App - Development Server Startup Script
+# Auth0 React App - Docker Startup Script
 
 echo "=================================="
 echo "Auth0 React Banking Demo"
@@ -18,17 +18,38 @@ if [ ! -f .env ]; then
     exit 1
 fi
 
-# Check if node_modules exists
-if [ ! -d node_modules ]; then
-    echo "📦 Installing dependencies..."
-    npm install
+# Check if Docker is running
+if ! docker info > /dev/null 2>&1; then
+    echo "❌ Error: Docker is not running!"
     echo ""
+    echo "Please start Docker and try again."
+    echo ""
+    exit 1
 fi
 
-# Start the development server
-echo "🚀 Starting development server on http://localhost:8080"
+# Check if docker-compose is available
+if command -v docker-compose &> /dev/null; then
+    COMPOSE_CMD="docker-compose"
+elif docker compose version &> /dev/null 2>&1; then
+    COMPOSE_CMD="docker compose"
+else
+    echo "❌ Error: docker-compose not found!"
+    echo ""
+    echo "Please install Docker Compose and try again."
+    echo ""
+    exit 1
+fi
+
+# Stop any existing containers
+echo "🧹 Stopping any existing containers..."
+$COMPOSE_CMD down 2>/dev/null
+
+# Build and start the container
 echo ""
-echo "Press Ctrl+C to stop the server"
+echo "🔨 Building Docker image..."
 echo ""
 
-npm run dev
+$COMPOSE_CMD up --build
+
+# Note: The script will stay running until you press Ctrl+C
+# When you stop it, the container will be stopped automatically
