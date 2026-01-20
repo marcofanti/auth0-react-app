@@ -33,6 +33,9 @@ RUN chmod +x /docker-entrypoint.sh
 # Expose port 8080
 EXPOSE 8080
 
+ENV VITE_AUTH0_DOMAIN=dev-mx1r57d771k346dl.us.auth0.com
+ENV VITE_AUTH0_CLIENT_ID=your-client-id
+
 # Use custom entrypoint
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
